@@ -1,23 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
 
 function App() {
+  const [tasks, setTasks] = useState([0, 1, 2, 2, 3, 0, 4, 2]);
+  const [r, setR] = useState(0);
+  const [l, setL] = useState(0);
+
+  function handleClick() {
+    setR(r + 1);
+    if (tasks[r] !== 0) {
+      [tasks[l], tasks[r]] = [tasks[r], tasks[l]];
+      setL(l + 1);
+    }
+    setTasks(tasks);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      Tasks: {JSON.stringify(tasks)}
+      <pre>
+        Value of r: {JSON.stringify(r)}{' '}
+        {r === tasks.length ? 'end iteration' : ''}
+      </pre>
+      <button onClick={r < tasks.length ? handleClick : null}>Click</button>
     </div>
   );
 }
