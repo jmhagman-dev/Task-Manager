@@ -1,6 +1,6 @@
 # Move Zeroes Task Manager
 
-Task Manager App utilizing the leetcode problem https://leetcode.com/problems/move-zeroes/
+Task Manager utilizing the leetcode problem https://leetcode.com/problems/move-zeroes/
 
 ## Getting Started
 
