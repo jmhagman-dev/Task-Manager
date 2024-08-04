@@ -1,28 +1,26 @@
 import React, { useState } from 'react';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import { v4 } from 'uuid';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Task from './Task';
+import { v4 } from 'uuid';
+import TextField from '@mui/material/TextField';
 
 function moveComplete(arr) {
   let l = 0;
-  for (let r = 0; r < arr.length; r++) {
+  let r = 0;
+  while (r < arr.length) {
     if (arr[r].complete !== true) {
       let temp = arr[l];
       arr[l] = arr[r];
       arr[r] = temp;
       l++;
+      r++;
     }
+    r++;
   }
-  return arr;
+  return { arr, r, l };
 }
-
 
 function App() {
   const initialTasks = [
@@ -32,9 +30,10 @@ function App() {
     { _id: v4(), title: 'run', complete: false },
     { _id: v4(), title: 'pay bills', complete: true },
     { _id: v4(), title: 'laundry', complete: true },
-  ]
-  const [tasks, setTasks] = useState(initialTasks);
+  ];
 
+  const [tasks, setTasks] = useState(initialTasks);
+  const [taskTitleValue, setTaskTitleValue] = useState('');
   const [r, setR] = useState(0);
   const [l, setL] = useState(0);
 
@@ -52,6 +51,16 @@ function App() {
     setTasks(updatedTasks);
   }
 
+  function handleChange(event) {
+    setTaskTitleValue(event.target.value);
+  }
+
+  function addTask(title) {
+    const newTask = { _id: v4(), title, complete: false };
+    setTasks([newTask, ...tasks]);
+    setTaskTitleValue('');
+  }
+
   function handleChecked(item, index) {
     const updatedTask = { ...item, complete: !item.complete };
     const updatedTasks = [...tasks];
@@ -60,9 +69,16 @@ function App() {
   }
 
   function moveTasks() {
-    const t = [...tasks];
-    const updatedTasks = moveComplete(t);
-    setTasks(updatedTasks);
+    const { arr, l, r } = moveComplete([...tasks]);
+    setL(l)
+    setR(r)
+    setTasks(arr);
+  }
+
+  function reset() {
+    setL(0);
+    setR(0);
+    setTasks(initialTasks);
   }
 
   const style = {
@@ -76,40 +92,32 @@ function App() {
   };
 
   return (
-    <Container maxWidth="fixed">
+    <Container maxWidth='fixed'>
       <h1>Tasks Manager</h1>
+      <TextField
+        sx={{ marginRight: 10, marginBottom: 10 }}
+        variant='outlined'
+        type='text'
+        id='task-input'
+        onChange={handleChange}
+        value={taskTitleValue}
+      />
+      <Button
+        variant='contained'
+        onClick={() => addTask(taskTitleValue)}
+      >
+        Add Task
+      </Button>
       <List sx={style}>
-        {tasks.map((item, i) => {
-          const labelId = `checkbox-list-label-${item._id}`;
-
+        {tasks.map((task, i) => {
           return (
-            <div key={item._id}>
-              <ListItem
-                key={labelId}
-                sx={{ background: 'cream' }}
-                disablePadding
-              >
-                <ListItemButton
-                  role={undefined}
-                  dense
-                >
-                  <ListItemText id={labelId}>
-                    {item.complete ? <s style={{color: 'green'}}>{item.title}</s> : item.title}
-                  </ListItemText>
-
-                  <ListItemIcon>
-                    <Checkbox
-                      edge='start'
-                      onClick={() => handleChecked(item, i)}
-                      checked={item.complete}
-                      tabIndex={-1}
-                      inputProps={{ 'aria-labelledby': labelId }}
-                    />
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-              <Divider component='li' />
-            </div>
+            <Task
+              handleChecked={handleChecked}
+              task={task}
+              index={i}
+              r={r}
+              l={l}
+            />
           );
         })}
       </List>
@@ -120,7 +128,7 @@ function App() {
           Value of r: {r} {r === tasks.length ? 'end iteration' : ''}
         </p>
       </div>
-      <div style={{marginBottom: 20}}>
+      <div style={{ marginBottom: 20 }}>
         <Button
           variant='contained'
           onClick={r < tasks.length ? handleClick : null}
@@ -128,7 +136,7 @@ function App() {
           Iterate
         </Button>
       </div>
-      <div style={{marginBottom: 20}}>
+      <div style={{ marginBottom: 20 }}>
         <Button
           variant='contained'
           onClick={moveTasks}
@@ -139,11 +147,7 @@ function App() {
       <div>
         <Button
           variant='contained'
-          onClick={() => {
-            setL(0);
-            setR(0);
-            setTasks(initialTasks);
-          }}
+          onClick={reset}
         >
           Reset
         </Button>
