@@ -11,7 +11,7 @@ function Task({ task, index, handleChecked, r, l }) {
   return (
     <div key={task._id}>
       <ListItem
-        
+        key={task._id}
         disablePadding
       >
         <ListItemButton
