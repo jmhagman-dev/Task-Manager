@@ -93,7 +93,7 @@ function App() {
 
   return (
     <Container maxWidth='fixed'>
-      <h1>Tasks Manager</h1>
+      <h1>Task Manager</h1>
       <TextField
         sx={{ marginRight: 10, marginBottom: 10 }}
         variant='outlined'
