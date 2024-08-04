@@ -112,6 +112,7 @@ function App() {
         {tasks.map((task, i) => {
           return (
             <Task
+              key={task._id}
               handleChecked={handleChecked}
               task={task}
               index={i}
